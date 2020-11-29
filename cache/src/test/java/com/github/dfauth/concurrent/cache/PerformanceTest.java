@@ -29,13 +29,13 @@ public class PerformanceTest {
         { // warm up
             CompletableFuture<Double> f0 = doit(trials, executors, f -> new ConcurrentHashMapCacheImpl<>(f));
             CompletableFuture<Double> f1 = doit(trials, executors, f -> new SynchronizedCacheImpl<>(f));
-            CompletableFuture<Double> f2 = doit(trials, executors, f -> new BucketCacheImpl(f, trials));
+            CompletableFuture<Double> f2 = doit(trials, executors, f -> new BucketCacheImpl(f));
             CompletableFuture.allOf(f0,f1,f2).get(10, TimeUnit.SECONDS);
         }
 
         CompletableFuture<Double> f0 = doit(trials, executors, f -> new ConcurrentHashMapCacheImpl<>(f));
         CompletableFuture<Double> f1 = doit(trials, executors, f -> new SynchronizedCacheImpl<>(f));
-        CompletableFuture<Double> f2 = doit(trials, executors, f -> new BucketCacheImpl(f));
+        CompletableFuture<Double> f2 = doit(trials, executors, f -> new BucketCacheImpl(f, trials));
         f0.thenAccept(elapsed -> {
             logger.info("ConcurrentHashMapCacheImpl completed in {} msec",elapsed);
         });
