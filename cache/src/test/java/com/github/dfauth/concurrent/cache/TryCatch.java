@@ -39,15 +39,16 @@ public class TryCatch {
             this.n = n;
         }
 
-        public CompletableFuture<Void> execute(Runnable r) {
-            CompletableFuture<Void> f = new CompletableFuture<Void>();
+        public CompletableFuture<Double> execute(Runnable r) {
+            long now = System.nanoTime();
+            CompletableFuture<Double> f = new CompletableFuture<>();
             ExecutorService runner = Executors.newFixedThreadPool(n);
             CountDownLatch latch = new CountDownLatch(n);
             for(int i=0; i<n; i++) {
                 runner.submit(wrap(() -> r.run(), () -> {
                     latch.countDown();
                     if(latch.getCount() == 0) {
-                        f.complete(null);
+                        f.complete((System.nanoTime()-now)/1000000.0);
                     }
                 }));
             }

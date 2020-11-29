@@ -71,19 +71,17 @@ public abstract class CacheTest {
             return k;
         });
 
-        long now = System.nanoTime();
         int trials = 100;
-        CompletableFuture<Void> f = executors(10).execute(() -> {
+        CompletableFuture<Double> f = executors(10).execute(() -> {
             for (int i = 0; i < trials; i++) {
                 int k = i;
                 Integer v = cache.get(k);
                 assertEquals(k, v.intValue());
             }
         });
-        f.get(10, TimeUnit.SECONDS);
-        long elapsed = System.nanoTime() - now;
+        Double elapsed = f.get(10, TimeUnit.SECONDS);
         assertEquals(trials, executionCounter.get());
-        logger.info("cache implementation {} executed in {} msec", cache, elapsed/1000000.0);
+        logger.info("cache implementation {} executed in {} msec", cache, elapsed);
     }
 
 
