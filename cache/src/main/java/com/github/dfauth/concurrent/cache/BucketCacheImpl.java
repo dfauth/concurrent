@@ -15,12 +15,17 @@ public class BucketCacheImpl<K,V> implements Cache<K,V> {
     private static final Logger logger = LoggerFactory.getLogger(BucketCacheImpl.class);
 
     private final Function<K, V> f;
-    private int size = 100;
-    private final Map<Integer, Bucket<K,V>> nestedCache = mapOfBucketsOfSize(size);
+    private final int size ;
+    private final Map<Integer, Bucket<K,V>> nestedCache;
 
     public BucketCacheImpl(Function<K,V> f) {
+        this(f, 100);
+    }
+    public BucketCacheImpl(Function<K,V> f, int size) {
         Objects.requireNonNull(f);
         this.f = f;
+        this.size = size;
+        this.nestedCache = mapOfBucketsOfSize(size);
     }
 
     @Override

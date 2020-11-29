@@ -22,8 +22,6 @@ public class PerformanceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(PerformanceTest.class);
 
-    protected Function<Integer, String> testFn = i -> UUID.randomUUID().toString();
-
     @Test
     public void testPerformance() throws InterruptedException, ExecutionException, TimeoutException {
         int trials = 100;
@@ -31,7 +29,7 @@ public class PerformanceTest {
         { // warm up
             CompletableFuture<Double> f0 = doit(trials, executors, f -> new ConcurrentHashMapCacheImpl<>(f));
             CompletableFuture<Double> f1 = doit(trials, executors, f -> new SynchronizedCacheImpl<>(f));
-            CompletableFuture<Double> f2 = doit(trials, executors, f -> new BucketCacheImpl(f));
+            CompletableFuture<Double> f2 = doit(trials, executors, f -> new BucketCacheImpl(f, trials));
             CompletableFuture.allOf(f0,f1,f2).get(10, TimeUnit.SECONDS);
         }
 
@@ -60,6 +58,7 @@ public class PerformanceTest {
         CompletableFuture<Double> f = executors(executors).execute(() -> {
             for (int i = 0; i < trials; i++) {
                 int k = (int)(random()*trials);
+//                int k = i;
                 Integer v = cache.get(k);
                 assertEquals(k, v.intValue());
             }
