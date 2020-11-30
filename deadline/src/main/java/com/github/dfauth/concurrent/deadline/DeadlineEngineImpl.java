@@ -38,29 +38,26 @@ public class DeadlineEngineImpl implements DeadlineEngine {
     @Override
     public int poll(long deadlineMs, Consumer<Long> handler, int maxPoll) {
         AtomicInteger cnt = new AtomicInteger(0);
-        Set<Long> executedRequestIds = requestIdsByDeadline.headMap(deadlineMs)
+        return requestIdsByDeadline.headMap(deadlineMs)
                 .values()
                 .stream()
                 .flatMap(v -> v.stream())
                 .filter(v -> cnt.getAndIncrement() < maxPoll)
-                .peek(v -> {
-                    try {
-                        handler.accept(v);
-                    } catch(RuntimeException e) {
-                        logger.error(e.getMessage(), e);
+                .map(v -> {
+                    if(cancel(v)) {
+                        try {
+                            handler.accept(v);
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                        } finally {
+                            return 1;
+                        }
+                    } else {
+                        return 0;
                     }
                 })
-                .reduce(new HashSet<>(),
-                        (acc,v) -> {
-                            acc.add(v);
-                            return acc;
-                        },
-                        (acc1,acc2) -> {
-                            acc1.addAll(acc2);
-                            return acc1;
-                        });
-        executedRequestIds.forEach(i -> cancel(i));
-        return executedRequestIds.size();
+                .reduce(0,
+                        (acc,v) -> acc+v);
     }
 
     @Override
