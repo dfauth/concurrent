@@ -4,16 +4,14 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
-import static com.github.dfauth.concurrent.cache.TryCatch.executors;
+import static com.github.dfauth.concurrent.cache.TestUtils.executors;
 import static java.lang.Math.random;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

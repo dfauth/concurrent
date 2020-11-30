@@ -12,7 +12,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-import static com.github.dfauth.concurrent.cache.TryCatch.executors;
+import static com.github.dfauth.concurrent.cache.TestUtils.executors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 

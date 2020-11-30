@@ -12,6 +12,7 @@
   <name>concurrent</name>
 
   <modules>
+    <module>common</module>
     <module>deadline</module>
     <module>cache</module>
   </modules>
@@ -24,6 +25,13 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>com.github.dfauth.concurrent</groupId>
+        <artifactId>common</artifactId>
+        <classifier>tests</classifier>
+        <type>test-jar</type>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>

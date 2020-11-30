@@ -7,9 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.function.Consumer;
 
 import static org.junit.Assert.*;
 
@@ -101,44 +98,6 @@ public class TestCase {
         assertEquals(handler.triggeredRequestIds().size(), 2);
         assertTrue(handler.wasTriggeredWith(id1) && handler.wasTriggeredWith(id2));
 
-    }
-
-    static class TestHandler implements Consumer<Long> {
-
-        private Collection<Long> requestIds = new ArrayList<>();
-
-        @Override
-        public void accept(Long id) {
-            requestIds.add(id);
-        }
-
-        public boolean wasTriggered() {
-            return ! requestIds.isEmpty();
-        }
-
-        public boolean wasTriggeredWith(Long requestId) {
-            return requestIds.contains(requestId);
-        }
-
-        public boolean wasTriggeredAndReset() {
-            try {
-                return wasTriggered();
-            } finally {
-                requestIds.clear();
-            }
-        }
-
-        public boolean wasTriggeredWithAndReset(Long requestId) {
-            try {
-                return wasTriggeredWith(requestId);
-            } finally {
-                requestIds.clear();
-            }
-        }
-
-        public Collection<Long> triggeredRequestIds() {
-            return requestIds;
-        }
     }
 
     private long secondsFromNow(long seconds) {

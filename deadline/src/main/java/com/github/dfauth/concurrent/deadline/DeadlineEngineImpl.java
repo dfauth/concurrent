@@ -43,14 +43,22 @@ public class DeadlineEngineImpl implements DeadlineEngine {
                 .stream()
                 .flatMap(v -> v.stream())
                 .filter(v -> cnt.getAndIncrement() < maxPoll)
-                .peek(v -> handler.accept(v))
-                .reduce(new HashSet<>(), (acc,v) -> {
-                    acc.add(v);
-                    return acc;
-                }, (acc1,acc2) -> {
-                    acc1.addAll(acc2);
-                    return acc1;
-                });
+                .peek(v -> {
+                    try {
+                        handler.accept(v);
+                    } catch(RuntimeException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                })
+                .reduce(new HashSet<>(),
+                        (acc,v) -> {
+                            acc.add(v);
+                            return acc;
+                        },
+                        (acc1,acc2) -> {
+                            acc1.addAll(acc2);
+                            return acc1;
+                        });
         executedRequestIds.forEach(i -> cancel(i));
         return executedRequestIds.size();
     }
