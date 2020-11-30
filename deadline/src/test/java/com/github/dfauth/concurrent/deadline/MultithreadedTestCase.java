@@ -33,7 +33,7 @@ public class MultithreadedTestCase {
 
         CompletableFuture<Double> f = executors(10).execute(withExceptionLogging(() -> {
             for (int i = 0; i < 10; i++) {
-                long t = now().plus(Duration.ofSeconds(5)).toEpochMilli();
+                long t = now().plus(Duration.ofSeconds(2)).toEpochMilli();
                 {
                     long id = engine.schedule(t);
                     logger.info("scheduled requestId {} for {}", id, t);
@@ -53,7 +53,7 @@ public class MultithreadedTestCase {
         f.thenAccept(e -> {
             logger.info("elapsed time: {} msec", e);
         });
-        f.get(10, TimeUnit.SECONDS);
+        f.get(5, TimeUnit.SECONDS);
         for (int i = 0; i < 10; i++) {
             assertEquals("Oops, for requestId "+i, 1, handler.executionCount(i));
         }
