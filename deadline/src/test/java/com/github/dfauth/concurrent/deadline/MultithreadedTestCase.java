@@ -13,7 +13,6 @@ import java.util.concurrent.TimeoutException;
 
 import static com.github.dfauth.concurrent.cache.TestUtils.executors;
 import static com.github.dfauth.concurrent.cache.TestUtils.withExceptionLogging;
-import static java.lang.Math.random;
 import static java.time.Instant.now;
 import static org.junit.Assert.assertEquals;
 
@@ -34,7 +33,6 @@ public class MultithreadedTestCase {
 
         CompletableFuture<Double> f = executors(10).execute(withExceptionLogging(() -> {
             for (int i = 0; i < 10; i++) {
-                Thread.sleep((long)(random() * 100));
                 long t = now().plus(Duration.ofSeconds(5)).toEpochMilli();
                 {
                     long id = engine.schedule(t);
@@ -47,10 +45,9 @@ public class MultithreadedTestCase {
                 Thread.sleep(100);
             }
             while (engine.size() > 0) {
-                Thread.sleep((long)(random() * 100));
                 Thread.sleep(100);
                 int cnt = engine.poll(now().toEpochMilli(), handler, Integer.MAX_VALUE);
-                logger.info("executed {} callbacks", cnt);
+                logger.info("executed {} callbacks engine.size(): {}", cnt, engine.size());
             }
         }));
         f.thenAccept(e -> {

@@ -4,20 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class TestHandler implements Consumer<Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(TestHandler.class);
 
-    private Map<Long, Integer> requestIds = new HashMap<>();
+    private Map<Long, Integer> requestIds = new ConcurrentHashMap<>();
 
     @Override
     public void accept(Long id) {
         logger.info("executing requestId {}", id);
-        requestIds.compute(id, (k,v) -> v == null ? 1 : v++);
+        requestIds.compute(id, (k,v) -> v == null ? 1 : v+1);
     }
 
     public boolean wasTriggered() {
