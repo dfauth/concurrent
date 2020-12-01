@@ -15,10 +15,6 @@ public class Bucket<K,V> {
         return tmp;
     }
 
-    public static <K> int keyOf(K k, int size) {
-        return k.hashCode()%size;
-    }
-
     public V get(K k) {
         return map.get(k);
     }
