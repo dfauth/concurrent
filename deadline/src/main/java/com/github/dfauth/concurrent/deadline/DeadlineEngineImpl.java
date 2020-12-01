@@ -31,7 +31,13 @@ public class DeadlineEngineImpl implements DeadlineEngine {
     @Override
     public boolean cancel(long requestId) {
         return Optional.ofNullable(deadlinesByRequestId.remove(requestId)).map(deadline ->
-            requestIdsByDeadline.getOrDefault(deadline, Collections.emptyList()).remove(requestId)
+            Optional.ofNullable(requestIdsByDeadline.get(deadline)).map(l -> {
+                boolean removed = l.remove(requestId);
+                if(l.isEmpty()) {
+                    requestIdsByDeadline.remove(deadline);
+                }
+                return removed;
+            }).orElse(false)
         ).orElse(false);
     }
 
@@ -41,23 +47,23 @@ public class DeadlineEngineImpl implements DeadlineEngine {
         return requestIdsByDeadline.headMap(deadlineMs)
                 .values()
                 .stream()
-                .flatMap(v -> v.stream())
+                .flatMap(Collection::stream)
                 .filter(v -> cnt.getAndIncrement() < maxPoll)
                 .map(v -> {
+                    int result = 0;
                     if(cancel(v)) {
                         try {
                             handler.accept(v);
                         } catch (Exception e) {
                             logger.error(e.getMessage(), e);
                         } finally {
-                            return 1;
+                            result = 1;
                         }
-                    } else {
-                        return 0;
                     }
+                    return result;
                 })
                 .reduce(0,
-                        (acc,v) -> acc+v);
+                        Integer::sum);
     }
 
     @Override
